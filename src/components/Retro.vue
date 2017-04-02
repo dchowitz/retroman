@@ -6,19 +6,13 @@
       <span id="jsCopyLink">{{link}}</span> <button @click="copyLink">copy link</button>
     </p>
     <hr/>
-    <h2>participants</h2>
-    <input v-model="newParticipant" placeholder="your name"/>
-    <button @click="addParticipant" :disabled="!canAddParticipant">add</button>
-    <ul>
-      <li v-for="p in participants">
-        {{p.name}}
-      </li>
-    </ul>
+    <participants :list="participants" @add="addParticipant"/>
   </div>
 </template>
 
 <script>
 import { getRetro, createParticipant } from '@/api';
+import Participants from '@/components/Participants';
 
 function toClipboard(containerId) {
   let range;
@@ -41,6 +35,9 @@ function toClipboard(containerId) {
 export default {
   name: 'retro',
   props: ['id'],
+  components: {
+    participants: Participants,
+  },
   created() {
     this.initData();
   },
@@ -55,7 +52,6 @@ export default {
       name: '',
       description: '',
       participants: [],
-      newParticipant: '',
     };
   },
   computed: {
@@ -73,8 +69,8 @@ export default {
     copyLink() {
       toClipboard('jsCopyLink');
     },
-    addParticipant() {
-      createParticipant(this.id, this.newParticipant)
+    addParticipant(newParticipant) {
+      createParticipant(this.id, newParticipant)
         .then(this.update)
         // eslint-disable-next-line
         .catch(console.log);
@@ -84,7 +80,6 @@ export default {
       this.description = retro.description;
       this.participants = retro.participants;
       this.link = window.location.toString();
-      this.newParticipant = '';
     },
   },
 };
