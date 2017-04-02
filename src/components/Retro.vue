@@ -6,13 +6,15 @@
       <span id="jsCopyLink">{{link}}</span> <button @click="copyLink">copy link</button>
     </p>
     <hr/>
-    <participants :list="participants" @add="addParticipant"/>
+    <participants v-if="!selectedParticipant" :list="participants" @add="addParticipant" @select="selectParticipant"/>
+    <participant v-if="selectedParticipant" :who="selectedParticipant" @back="selectedParticipant = null"/>
   </div>
 </template>
 
 <script>
 import { getRetro, createParticipant } from '@/api';
 import Participants from '@/components/Participants';
+import Participant from '@/components/Participant';
 
 function toClipboard(containerId) {
   let range;
@@ -37,6 +39,7 @@ export default {
   props: ['id'],
   components: {
     participants: Participants,
+    participant: Participant,
   },
   created() {
     this.initData();
@@ -52,6 +55,7 @@ export default {
       name: '',
       description: '',
       participants: [],
+      selectedParticipant: null,
     };
   },
   computed: {
@@ -75,11 +79,15 @@ export default {
         // eslint-disable-next-line
         .catch(console.log);
     },
+    selectParticipant(participant) {
+      this.selectedParticipant = participant;
+    },
     update(retro) {
       this.name = retro.name;
       this.description = retro.description;
       this.participants = retro.participants;
       this.link = window.location.toString();
+      this.selectedParticipant = null;
     },
   },
 };

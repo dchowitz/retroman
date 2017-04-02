@@ -5,7 +5,7 @@
     <button @click="addParticipant" :disabled="!canAddParticipant">add</button>
     <ul>
       <li v-for="participant in list">
-        {{participant.name}}
+        <a @click="selectParticipant(participant)">{{participant.name}}</a>
       </li>
     </ul>
   </div>
@@ -29,6 +29,9 @@ export default {
     addParticipant() {
       this.$emit('add', this.newParticipant);
       this.newParticipant = '';
+    },
+    selectParticipant(participant) {
+      this.$emit('select', participant);
     },
   },
 };

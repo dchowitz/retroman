@@ -39,6 +39,11 @@ a {
   color: #42b983;
 }
 
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 button {
   font-size: 1.5em;
 }
