@@ -1,0 +1,5 @@
+# retroman
+
+> Simple distributed retrospectives.
+
+
