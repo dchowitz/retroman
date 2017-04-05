@@ -10,6 +10,23 @@ const retros = [
     participants: [
       {
         name: 'Tom',
+        notes: [
+          {
+            title: 'note 1',
+            category: 'good', // one of good, bad, keep, improve (more?)
+            description: 'lkasd aölsfkj aösflk adlk skfdkfaös asölkjdkdöklj asdflkj',
+          },
+          {
+            title: 'note 2',
+            category: 'bad', // one of good, bad, keep, improve (more?)
+            description: 'kdkj djkdjl flkdl sdflkj sflkj sflkj df',
+          },
+          {
+            title: 'note 3',
+            category: 'bad', // one of good, bad, keep, improve (more?)
+            description: 'jd djkddfkjkdf kjdj',
+          },
+        ],
       },
       {
         name: 'Lisa',
