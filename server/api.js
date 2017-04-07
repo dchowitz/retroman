@@ -14,7 +14,7 @@ const retros = [
           {
             title: 'note 1',
             category: 'good', // one of good, bad, keep, improve (more?)
-            description: 'lkasd aölsfkj aösflk adlk skfdkfaös asölkjdkdöklj asdflkj',
+            description: 'lkasd aölsfkj\naösflkadlk\nskfdkfaös\nasölkj\ndkdöklj\nasdflkj',
           },
           {
             title: 'note 2',
