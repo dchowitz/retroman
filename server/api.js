@@ -73,17 +73,22 @@ apiRoutes.get('/retro/:id', (req, res) => {
   }
 });
 
+// create/update participant
 apiRoutes.post('/retro/:id/part', (req, res) => {
-  const retro = retros.find(r => r.id === req.params.id);
+  const retroId = req.params.id;
+  const retro = retros.find(r => r.id === retroId);
   if (retro) {
-    const name = req.body.name;
+    const { name, notes = [] } = req.body;
     const participant = retro.participants.find(p => p.name === name);
-    if (!participant) {
-      retro.participants.push({ name });
+    if (participant) {
+      participant.name = name;
+      participant.notes = notes;
+    } else {
+      retro.participants.push({ name, notes });
     }
     res.status(201).json(retro);
   } else {
-    res.sendStatus(404);
+    res.sendStatus(404).json({ message: `unknown retro id '${retroId}'` });
   }
 });
 

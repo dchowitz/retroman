@@ -6,13 +6,13 @@
       <span id="jsCopyLink">{{link}}</span> <button @click="copyLink">copy link</button>
     </p>
     <hr/>
-    <participants v-if="!selectedParticipant" :list="participants" @add="addParticipant" @select="selectParticipant"/>
-    <participant v-if="selectedParticipant" :who="selectedParticipant" @back="selectedParticipant = null"/>
+    <participants v-if="!selectedParticipant" :list="participants" @add="addParticipant" @select="selectParticipant" />
+    <participant v-if="selectedParticipant" :who="selectedParticipant" @back="selectedParticipant = null" @update="updateParticipant" />
   </div>
 </template>
 
 <script>
-import { getRetro, createParticipant } from '@/api';
+import { getRetro, createOrUpdateParticipant } from '@/api';
 import Participants from '@/components/Participants';
 import Participant from '@/components/Participant';
 
@@ -67,14 +67,26 @@ export default {
     initData() {
       getRetro(this.id)
         .then(this.update)
+        .then(() => {
+          this.selectedParticipant = null;
+        })
         // eslint-disable-next-line
         .catch(console.log);
     },
     copyLink() {
       toClipboard('jsCopyLink');
     },
-    addParticipant(newParticipant) {
-      createParticipant(this.id, newParticipant)
+    addParticipant(participantName) {
+      createOrUpdateParticipant(this.id, { name: participantName })
+        .then(this.update)
+        .then(() => {
+          this.selectedParticipant = null;
+        })
+        // eslint-disable-next-line
+        .catch(console.log);
+    },
+    updateParticipant(participant) {
+      createOrUpdateParticipant(this.id, participant)
         .then(this.update)
         // eslint-disable-next-line
         .catch(console.log);
@@ -87,7 +99,6 @@ export default {
       this.description = retro.description;
       this.participants = retro.participants;
       this.link = window.location.toString();
-      this.selectedParticipant = null;
     },
   },
 };

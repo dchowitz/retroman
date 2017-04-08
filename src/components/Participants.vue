@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>participants</h2>
-    <input v-model="newParticipant" placeholder="your name"/>
+    <input v-model="newParticipantName" placeholder="your name"/>
     <button @click="addParticipant" :disabled="!canAddParticipant">add</button>
     <ul>
       <li v-for="participant in list">
@@ -17,18 +17,18 @@ export default {
   props: ['list'],
   data() {
     return {
-      newParticipant: '',
+      newParticipantName: '',
     };
   },
   computed: {
     canAddParticipant() {
-      return !!this.newParticipant;
+      return !!this.newParticipantName;
     },
   },
   methods: {
     addParticipant() {
-      this.$emit('add', this.newParticipant);
-      this.newParticipant = '';
+      this.$emit('add', this.newParticipantName);
+      this.newParticipantName = '';
     },
     selectParticipant(participant) {
       this.$emit('select', participant);

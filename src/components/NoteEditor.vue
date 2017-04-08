@@ -1,12 +1,13 @@
 <template>
   <div class="noteEditor">
-    <div class="fullWidth">
+    <div>
       <input v-model="title" placeholder="note title"/>
     </div>
-    <div class="fullWidth">
+    <div>
       <textarea v-model="description" placeholder="optional description" rows="10"/>
     </div>
-    <div>
+    <div class="button-line">
+      <button @click="cancel">Cancel</button>
       <button @click="save">OK</button>
     </div>
   </div>
@@ -36,6 +37,9 @@ export default {
         description: this.description,
       });
     },
+    cancel() {
+      this.$emit('cancel');
+    },
   },
 };
 </script>
@@ -48,22 +52,27 @@ export default {
   margin: auto;
 }
 
-.fullWidth {
-  width: 100%;
-}
-
-.edit input {
+input {
   width: 100%;
   margin-bottom: 10px;
+  border: 1px solid lightgray;
 }
 
-.edit textarea {
+textarea {
   width: 100%;
   resize: none;
   margin-bottom: 10px;
+  border: 1px solid lightgray;
 }
 
 button {
   font-size: 11px;
+  margin-left: 10px;
+}
+
+.button-line {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
 }
 </style>

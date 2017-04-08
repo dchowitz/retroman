@@ -19,12 +19,12 @@ export function getRetro(id) {
   return fetch(`/api/retro/${id}`, { method: 'GET' }).then(validate);
 }
 
-export function createParticipant(id, participantName) {
+export function createOrUpdateParticipant(id, participant) {
   return fetch(`/api/retro/${id}/part`, {
     method: 'POST',
     headers: new Headers({
       'Content-Type': 'application/json',
     }),
-    body: JSON.stringify({ name: participantName }),
+    body: JSON.stringify(participant),
   }).then(validate);
 }

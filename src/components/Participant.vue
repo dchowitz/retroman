@@ -4,7 +4,10 @@
     <div v-if="!selectedNote" class="notes-container">
       <note-list-item v-for="n in who.notes" :param="n" @select="selectedNote = n" />
     </div>
-    <noteEditor :note="selectedNote" v-if="selectedNote" @save="selectedNote = null" />
+    <noteEditor v-if="selectedNote"
+      :note="selectedNote"
+      @save="save"
+      @cancel="selectedNote = null" />
   </div>
 </template>
 
@@ -27,6 +30,13 @@ export default {
   methods: {
     back() {
       this.$emit('back');
+    },
+    save({ title, category, description }) {
+      this.selectedNote.title = title;
+      this.selectedNote.category = category;
+      this.selectedNote.description = description;
+      this.selectedNote = null;
+      this.$emit('update', this.who);
     },
   },
 };
