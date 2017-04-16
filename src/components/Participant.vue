@@ -2,7 +2,7 @@
   <div>
     <h2><a @click="back">participants</a> / {{who.name}}</h2>
     <div v-if="!selectedNote" class="notes-container">
-      <note-list-item v-for="n in who.notes" :param="n" @select="selectedNote = n" />
+      <note-list-item v-for="n in who.notes" :key="n.id" :param="n" @select="selectedNote = n" />
     </div>
     <noteEditor v-if="selectedNote"
       :note="selectedNote"
