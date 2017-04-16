@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <h1>retroman</h1>
     <router-view></router-view>
   </div>
 </template>
@@ -26,8 +25,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
-
+  margin: 0;
 }
 
 h1, h2 {

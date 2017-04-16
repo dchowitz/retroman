@@ -1,11 +1,12 @@
 <template>
   <div>
-    <h2>{{name}}</h2>
-    <p>
-      {{description}}<br/>
-      <span id="jsCopyLink">{{link}}</span> <button @click="copyLink">copy link</button>
+    <retro-header :name="name" :description="description" />
+    <!--<h2>{{name}} <button @click="copyLink">copy link</button></h2>
+    <div id="jsCopyLink">{{link}}</div>
+    <p v-if="!!description">
+      {{description}}
     </p>
-    <hr/>
+    <hr/>-->
     <participants v-if="!selectedParticipant" :list="participants" @add="addParticipant" @select="selectParticipant" />
     <participant v-if="selectedParticipant" :who="selectedParticipant" @back="selectedParticipant = null" @update="updateParticipant" />
   </div>
@@ -13,6 +14,7 @@
 
 <script>
 import { getRetro, createOrUpdateParticipant } from '@/api';
+import Header from '@/components/Header';
 import Participants from '@/components/Participants';
 import Participant from '@/components/Participant';
 
@@ -38,11 +40,16 @@ export default {
   name: 'retro',
   props: ['id'],
   components: {
+    'retro-header': Header,
     participants: Participants,
     participant: Participant,
   },
   created() {
     this.initData();
+    this.$router.afterEach((to) => {
+      // eslint-disable-next-line
+      console.log(to);
+    });
   },
   watch: {
     $route() {
@@ -115,5 +122,11 @@ h2 {
 
 button {
   font-size: 11px;
+}
+
+#jsCopyLink {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 </style>

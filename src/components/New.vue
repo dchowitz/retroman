@@ -1,5 +1,6 @@
 <template>
   <div>
+    <retro-header />
     <h2>new retro</h2>
     <div>
       <input v-model="name" placeholder="retro name" />
@@ -17,9 +18,13 @@
 
 <script>
 import { createRetro } from '@/api';
+import Header from '@/components/Header';
 
 export default {
   name: 'new',
+  components: {
+    'retro-header': Header,
+  },
   data() {
     return {
       name: '',
