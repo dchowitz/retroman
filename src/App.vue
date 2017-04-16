@@ -17,6 +17,8 @@ html {
 
 *, *:before, *:after {
   box-sizing: inherit;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -53,6 +55,12 @@ a:hover {
 
 button {
   font-size: 1.5em;
+}
+
+.debug {
+  color: gray;
+  font-size: 11px;
+  margin-top: 50px;
 }
 
 </style>

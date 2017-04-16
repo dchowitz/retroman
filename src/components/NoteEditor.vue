@@ -1,22 +1,29 @@
 <template>
   <div class="noteEditor">
     <div>
-      <input v-model="title" placeholder="note title"/>
+      <input ref="title" v-model="title" placeholder="title"/>
     </div>
     <div>
       <textarea v-model="description" placeholder="optional description" rows="10"/>
     </div>
     <div class="button-line">
-      <button @click="cancel">Cancel</button>
       <button @click="save">OK</button>
+      <button @click="cancel">Cancel</button>
     </div>
   </div>
 </template>
 
 <script>
+import bus from '@/bus';
+
 export default {
-  name: 'noteEditor',
+  name: 'note-editor',
   props: ['note'],
+  created() {
+    setTimeout(() => {
+      this.$refs.title.focus();
+    }, 0);
+  },
   data() {
     return {
       title: this.note.title,
@@ -31,11 +38,13 @@ export default {
   },
   methods: {
     save() {
-      this.$emit('save', {
+      const note = {
         title: this.title,
         category: this.category,
         description: this.description,
-      });
+      };
+      this.$emit('save', note);
+      bus.$emit('note-added', note);
     },
     cancel() {
       this.$emit('cancel');
@@ -50,12 +59,6 @@ export default {
   margin: 10px;
   text-align: left;
   margin: auto;
-}
-
-input {
-  width: 100%;
-  margin-bottom: 10px;
-  border: 1px solid lightgray;
 }
 
 textarea {

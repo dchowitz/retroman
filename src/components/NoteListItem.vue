@@ -4,27 +4,28 @@
       <a @click="select"><strong>{{title}}</strong> ({{category}})</a>
     </div>
     <div v-for="line in descriptionLines">{{line}}</div>
-    <div v-if="hasMore">...</div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'noteListItem',
-  props: ['param'],
+  props: ['note'],
   data() {
     return {
-      title: this.param.title,
-      category: this.param.category,
-      description: this.param.description,
+      title: this.note.title,
+      category: this.note.category,
+      description: this.note.description,
     };
   },
   computed: {
     descriptionLines() {
-      return this.description.split('\n').slice(0, 2);
-    },
-    hasMore() {
-      return this.description.split('\n').length > 2;
+      const lines = this.description.split('\n');
+      const copy = lines.slice(0, 2);
+      if (lines.length > 2) {
+        copy[1] = `${copy[1]} ...`;
+      }
+      return copy;
     },
   },
   methods: {
@@ -38,7 +39,7 @@ export default {
 <style scoped>
 
 .note {
-  width: 300px;
+  max-width: 300px;
   margin: 10px;
   text-align: left;
 }

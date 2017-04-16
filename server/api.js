@@ -30,9 +30,11 @@ const retros = [
       },
       {
         name: 'Lisa',
+        notes: [],
       },
       {
         name: 'Paul',
+        notes: [],
       },
     ],
   },
@@ -43,12 +45,15 @@ const retros = [
     participants: [
       {
         name: 'Clair',
+        notes: [],
       },
       {
         name: 'Frank',
+        notes: [],
       },
       {
         name: 'Viola',
+        notes: [],
       },
     ],
   },
