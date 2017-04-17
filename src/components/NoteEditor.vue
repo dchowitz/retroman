@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import bus from '@/bus';
-
 export default {
   name: 'note-editor',
   props: ['note'],
@@ -44,7 +42,6 @@ export default {
         description: this.description,
       };
       this.$emit('save', note);
-      bus.$emit('note-added', note);
     },
     cancel() {
       this.$emit('cancel');
@@ -58,7 +55,8 @@ export default {
   width: 300px;
   margin: 10px;
   text-align: left;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 textarea {

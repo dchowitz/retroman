@@ -9,11 +9,19 @@
       :selected="selectedParticipantName"
       @selected="onParticipantSelected" />
 
-    <add-note class="margin-top"
-      v-if="selectedParticipantName" />
+    <note-editor class="margin-top"
+      v-if="showNoteEditor"
+      :note="{ title: null, category: this.selectedNoteCategory, description: null }"
+      @save="onNoteAdded"
+      @cancel="showNoteEditor = false" />
 
-    <note-list class="margin-top"
-      :notes="selectedParticipant.notes" />
+    <div v-else>
+      <add-note class="margin-top"
+        v-if="selectedParticipantName"
+        @categorySelected="onNoteCategorySelected" />
+      <note-list class="margin-top"
+        :notes="selectedParticipant.notes" />
+    </div>
 
     <div class="debug">
       {{JSON.stringify(selectedParticipant)}}
@@ -28,6 +36,7 @@ import ParticipantList from '@/components/ParticipantList';
 import AddParticipant from '@/components/AddParticipant';
 import NoteList from '@/components/NoteList';
 import AddNote from '@/components/AddNote';
+import NoteEditor from '@/components/NoteEditor';
 import bus from '@/bus';
 
 export default {
@@ -39,11 +48,11 @@ export default {
     'add-participant': AddParticipant,
     'note-list': NoteList,
     'add-note': AddNote,
+    'note-editor': NoteEditor,
   },
   created() {
     this.initData();
     bus.$on('participant-added', this.onParticipantAdded);
-    bus.$on('note-added', this.onNoteAdded);
   },
   watch: {
     $route() {
@@ -56,6 +65,8 @@ export default {
       description: '',
       participants: [],
       selectedParticipantName: null,
+      selectedNoteCategory: null,
+      showNoteEditor: false,
     };
   },
   computed: {
@@ -78,6 +89,7 @@ export default {
 
     onParticipantSelected(name) {
       this.selectedParticipantName = name;
+      this.showNoteEditor = false;
     },
 
     onParticipantAdded(name) {
@@ -86,13 +98,20 @@ export default {
         .then(this.update)
         .then(() => {
           this.selectedParticipantName = name;
+          this.showNoteEditor = false;
         })
         // eslint-disable-next-line
         .catch(console.log);
     },
 
+    onNoteCategorySelected(category) {
+      this.selectedNoteCategory = category;
+      this.showNoteEditor = true;
+    },
+
     onNoteAdded(note) {
       this.selectedParticipant.notes.push(note);
+      this.showNoteEditor = false;
 
       // TODO: prevent last update from overwriting changes in another client?
       createOrUpdateParticipant(this.id, this.selectedParticipant)
