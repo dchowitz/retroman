@@ -7,7 +7,7 @@
       <textarea v-model="description" placeholder="optional description" rows="10"/>
     </div>
     <div class="button-line">
-      <button @click="save">OK</button>
+      <button @click="save" :disabled="!canSave">Save</button>
       <button @click="cancel">Cancel</button>
     </div>
   </div>
@@ -32,6 +32,9 @@ export default {
   computed: {
     descriptionLines() {
       return this.description.split('\n');
+    },
+    canSave() {
+      return this.title && this.category && this.description;
     },
   },
   methods: {

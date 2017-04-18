@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const shortid = require('shortid');
+const validateParticipant = require('./validateParticipant');
 
 const retros = [
   {
@@ -80,21 +81,27 @@ apiRoutes.get('/retro/:id', (req, res) => {
 
 // create/update participant
 apiRoutes.post('/retro/:id/part', (req, res) => {
+  const participantRequest = validateParticipant(req.body);
+  if (participantRequest.errors) {
+    res.status(400).json({ messages: participantRequest.errors });
+    return;
+  }
+
   const retroId = req.params.id;
   const retro = retros.find(r => r.id === retroId);
-  if (retro) {
-    const { name, notes = [] } = req.body;
-    const participant = retro.participants.find(p => p.name === name);
-    if (participant) {
-      participant.name = name;
-      participant.notes = notes;
-    } else {
-      retro.participants.push({ name, notes });
-    }
-    res.status(201).json(retro);
-  } else {
+  if (!retro) {
     res.sendStatus(404).json({ message: `unknown retro id '${retroId}'` });
+    return;
   }
+
+  const participant = retro.participants.find(p => p.name === participantRequest.name);
+  if (participant) {
+    participant.name = participantRequest.name;
+    participant.notes = participantRequest.notes;
+  } else {
+    retro.participants.push(participantRequest);
+  }
+  res.status(201).json(retro);
 });
 
 module.exports = apiRoutes;

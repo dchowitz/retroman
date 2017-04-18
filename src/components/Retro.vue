@@ -109,6 +109,7 @@ export default {
       this.showNoteEditor = true;
     },
 
+    // TODO: better error handling in case request fails
     onNoteAdded(note) {
       this.selectedParticipant.notes.push(note);
       this.showNoteEditor = false;
