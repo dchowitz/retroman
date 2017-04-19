@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import bus from '@/bus';
+
 export default {
   name: 'noteListItem',
   props: ['note'],
@@ -31,6 +33,7 @@ export default {
   methods: {
     select() {
       this.$emit('select');
+      bus.$emit('note-selected', this.note);
     },
   },
 };

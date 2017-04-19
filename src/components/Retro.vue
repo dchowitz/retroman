@@ -11,8 +11,8 @@
 
     <note-editor class="margin-top"
       v-if="showNoteEditor"
-      :note="{ title: null, category: this.selectedNoteCategory, description: null }"
-      @save="onNoteAdded"
+      :note="noteToEdit"
+      @save="onNoteSave"
       @cancel="showNoteEditor = false" />
 
     <div v-else>
@@ -53,6 +53,7 @@ export default {
   created() {
     this.initData();
     bus.$on('participant-added', this.onParticipantAdded);
+    bus.$on('note-selected', this.onNoteSelected);
   },
   watch: {
     $route() {
@@ -65,7 +66,7 @@ export default {
       description: '',
       participants: [],
       selectedParticipantName: null,
-      selectedNoteCategory: null,
+      noteToEdit: null,
       showNoteEditor: false,
     };
   },
@@ -105,18 +106,31 @@ export default {
     },
 
     onNoteCategorySelected(category) {
-      this.selectedNoteCategory = category;
+      this.noteToEdit = { title: null, category, description: null };
       this.showNoteEditor = true;
     },
 
-    // TODO: better error handling in case request fails
-    onNoteAdded(note) {
-      this.selectedParticipant.notes.push(note);
-      this.showNoteEditor = false;
+    onNoteSelected(note) {
+      this.noteToEdit = note;
+      this.showNoteEditor = true;
+    },
+
+    // TODO: dedicated api endpoint for note update/creation?
+    // TODO: better overall state handling - this fiddling here is gruesome - vuex?!
+    onNoteSave(editedNote) {
+      const note = this.selectedParticipant.notes.find(n => n.id === editedNote.id);
+      if (note) {
+        Object.assign(note, editedNote);
+      } else {
+        this.selectedParticipant.notes.push(editedNote);
+      }
 
       // TODO: prevent last update from overwriting changes in another client?
       createOrUpdateParticipant(this.id, this.selectedParticipant)
         .then(this.update)
+        .then(() => {
+          this.showNoteEditor = false;
+        })
         // eslint-disable-next-line
         .catch(console.log);
     },

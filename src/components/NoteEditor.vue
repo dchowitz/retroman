@@ -40,6 +40,7 @@ export default {
   methods: {
     save() {
       const note = {
+        id: this.note.id,
         title: this.title,
         category: this.category,
         description: this.description,
