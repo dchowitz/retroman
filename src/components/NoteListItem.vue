@@ -4,10 +4,10 @@
     @mouseleave="showDelete = false">
     <div>
       <a @click="onSelect"><strong>{{title}}</strong> ({{category}})</a>
+      <confirm-delete class="delete" @deleted="onDelete" v-if="showDelete" />
     </div>
-    <div v-for="(line, index) in descriptionLines">
-      {{line}}
-      <confirm-delete @deleted="onDelete" v-if="showDelete && index === descriptionLines.length - 1" class="delete" />
+    <div class="line">
+      {{firstLine}}
     </div>
   </div>
 </template>
@@ -31,13 +31,9 @@ export default {
     };
   },
   computed: {
-    descriptionLines() {
+    firstLine() {
       const lines = this.description.split('\n');
-      const copy = lines.slice(0, 2);
-      if (lines.length > 2) {
-        copy[1] = `${copy[1]} ...`;
-      }
-      return copy;
+      return lines.length > 0 ? lines[0] : null;
     },
   },
   methods: {
@@ -56,9 +52,18 @@ export default {
 <style scoped>
 
 .note {
-  max-width: 300px;
-  margin: 10px;
+  margin-top: 10px;
   text-align: left;
+}
+
+.line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.delete {
+  margin-left: 10px;
 }
 
 </style>

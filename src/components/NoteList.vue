@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="note-list">
     <note-item v-for="note in notes"
       :key="note.id"
       :note="note" />
@@ -19,10 +19,10 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-wrap: wrap;
+
+.note-list {
+  width: 400px;
+  margin: 20px auto 0 auto;
 }
+
 </style>
