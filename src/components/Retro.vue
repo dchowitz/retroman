@@ -54,6 +54,7 @@ export default {
     this.initData();
     bus.$on('participant-added', this.onParticipantAdded);
     bus.$on('note-selected', this.onNoteSelected);
+    bus.$on('note-deleted', this.onNoteDeleted);
   },
   watch: {
     $route() {
@@ -131,6 +132,21 @@ export default {
         .then(() => {
           this.showNoteEditor = false;
         })
+        // eslint-disable-next-line
+        .catch(console.log);
+    },
+
+    onNoteDeleted(deletedNote) {
+      const notes = this.selectedParticipant.notes;
+      const position = notes.indexOf(deletedNote);
+      if (position === -1) {
+        return;
+      }
+
+      notes.splice(position, 1);
+
+      createOrUpdateParticipant(this.id, this.selectedParticipant)
+        .then(this.update)
         // eslint-disable-next-line
         .catch(console.log);
     },

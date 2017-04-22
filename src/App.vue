@@ -53,10 +53,6 @@ a:hover {
   cursor: pointer;
 }
 
-button {
-  font-size: 1.5em;
-}
-
 .debug {
   color: gray;
   font-size: 11px;
