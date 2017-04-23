@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <div>participants:</div>
+    <div>
+      <strong v-if="!selected">All</strong>
+      <a v-else @click="$emit('unselected')"><strong>All</strong></a>
+      participants
+    </div>
     <div v-for="name in names">
       <a v-if="selected !== name" @click="$emit('selected', name)"><strong>{{name}}</strong></a>
       <strong v-else>{{name}}</strong>

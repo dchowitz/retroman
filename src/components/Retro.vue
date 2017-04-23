@@ -7,7 +7,8 @@
     <participant-list class="margin-top"
       :names="participants"
       :selected="selectedParticipantName"
-      @selected="onParticipantSelected" />
+      @selected="onParticipantSelected"
+      @unselected="onParticipantUnselected" />
 
     <note-editor class="margin-top"
       v-if="showNoteEditor"
@@ -76,7 +77,7 @@ export default {
     notesByParticipant() {
       return this.selectedParticipantName
         ? this.notes.filter(n => n.author === this.selectedParticipantName)
-        : [];
+        : this.notes;
     },
   },
   methods: {
@@ -95,9 +96,14 @@ export default {
       this.showNoteEditor = false;
     },
 
+    onParticipantUnselected() {
+      this.selectedParticipantName = null;
+      this.showNoteEditor = false;
+    },
+
     onParticipantAdded(name) {
       // TODO: prevent adding participants when request is ongoing
-      this.createOrUpdateParticipant({ name })
+      this.createOrUpdateParticipant(name)
         .then(() => {
           this.selectedParticipantName = name;
           this.showNoteEditor = false;
@@ -126,7 +132,7 @@ export default {
       }
 
       // TODO: prevent last update from overwriting changes in another client?
-      this.createOrUpdateParticipant()
+      this.createOrUpdateParticipant((note && note.author) || this.selectedParticipantName)
         .then(() => {
           this.showNoteEditor = false;
         });
@@ -138,16 +144,20 @@ export default {
         return;
       }
       this.notes.splice(position, 1);
-      this.createOrUpdateParticipant();
+      this.createOrUpdateParticipant(deletedNote.author);
     },
 
-    createOrUpdateParticipant(participant = {
-      name: this.selectedParticipantName,
-      notes: this.notesByParticipant.map((n) => {
-        const { author, ...note } = n;
-        return note;
-      }),
-    }) {
+    createOrUpdateParticipant(participantName) {
+      const participant = {
+        name: participantName,
+        notes: this.notes
+          .filter(n => n.author === participantName)
+          .map((n) => {
+            const { author, ...note } = n;
+            return note;
+          }),
+      };
+
       return postParticipant(this.id, participant)
         .then(this.update)
         // eslint-disable-next-line
