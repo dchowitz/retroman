@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { createRetro } from '@/api';
+import { postRetro } from '@/api';
 import Header from '@/components/Header';
 
 export default {
@@ -43,7 +43,7 @@ export default {
         description: this.description,
       };
 
-      createRetro(retro)
+      postRetro(retro)
         .then((result) => {
           this.$router.push(`retro/${result.id}`);
         })

@@ -3,7 +3,7 @@
     @mouseenter="showDelete = true"
     @mouseleave="showDelete = false">
     <div>
-      <a @click="onSelect"><strong>{{title}}</strong> ({{category}})</a>
+      <strong>{{author}}:</strong> <a @click="onSelect"><strong>{{title}}</strong> ({{category}})</a>
       <confirm-delete class="delete" @deleted="onDelete" v-if="showDelete" />
     </div>
     <div class="line">
@@ -24,6 +24,7 @@ export default {
   props: ['note'],
   data() {
     return {
+      author: this.note.author,
       title: this.note.title,
       category: this.note.category,
       description: this.note.description,

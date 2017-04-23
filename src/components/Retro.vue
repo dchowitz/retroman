@@ -5,7 +5,7 @@
       :description="description" />
 
     <participant-list class="margin-top"
-      :names="participants.map(p => p.name)"
+      :names="participants"
       :selected="selectedParticipantName"
       @selected="onParticipantSelected" />
 
@@ -20,17 +20,17 @@
         v-if="selectedParticipantName"
         @categorySelected="onNoteCategorySelected" />
       <note-list class="margin-top"
-        :notes="selectedParticipant.notes" />
+        :notes="notesByParticipant" />
     </div>
 
     <div class="debug">
-      {{JSON.stringify(selectedParticipant)}}
+      {{JSON.stringify(notesByParticipant)}}
     </div>
   </div>
 </template>
 
 <script>
-import { getRetro, createOrUpdateParticipant } from '@/api';
+import { getRetro, postParticipant } from '@/api';
 import Header from '@/components/Header';
 import ParticipantList from '@/components/ParticipantList';
 import AddParticipant from '@/components/AddParticipant';
@@ -66,16 +66,17 @@ export default {
       name: '',
       description: '',
       participants: [],
+      notes: [],
       selectedParticipantName: null,
       noteToEdit: null,
       showNoteEditor: false,
     };
   },
   computed: {
-    selectedParticipant() {
+    notesByParticipant() {
       return this.selectedParticipantName
-        ? this.participants.find(p => p.name === this.selectedParticipantName)
-        : { name: null, notes: [] };
+        ? this.notes.filter(n => n.author === this.selectedParticipantName)
+        : [];
     },
   },
   methods: {
@@ -96,14 +97,11 @@ export default {
 
     onParticipantAdded(name) {
       // TODO: prevent adding participants when request is ongoing
-      createOrUpdateParticipant(this.id, { name })
-        .then(this.update)
+      this.createOrUpdateParticipant({ name })
         .then(() => {
           this.selectedParticipantName = name;
           this.showNoteEditor = false;
-        })
-        // eslint-disable-next-line
-        .catch(console.log);
+        });
     },
 
     onNoteCategorySelected(category) {
@@ -119,33 +117,38 @@ export default {
     // TODO: dedicated api endpoint for note update/creation?
     // TODO: better overall state handling - this fiddling here is gruesome - vuex?!
     onNoteSave(editedNote) {
-      const note = this.selectedParticipant.notes.find(n => n.id === editedNote.id);
+      const note = this.notes.find(n => n.id === editedNote.id);
       if (note) {
         Object.assign(note, editedNote);
       } else {
-        this.selectedParticipant.notes.push(editedNote);
+        const newNote = Object.assign({}, editedNote, { author: this.selectedParticipantName });
+        this.notes.push(newNote);
       }
 
       // TODO: prevent last update from overwriting changes in another client?
-      createOrUpdateParticipant(this.id, this.selectedParticipant)
-        .then(this.update)
+      this.createOrUpdateParticipant()
         .then(() => {
           this.showNoteEditor = false;
-        })
-        // eslint-disable-next-line
-        .catch(console.log);
+        });
     },
 
     onNoteDeleted(deletedNote) {
-      const notes = this.selectedParticipant.notes;
-      const position = notes.indexOf(deletedNote);
+      const position = this.notes.findIndex(n => n.id === deletedNote.id);
       if (position === -1) {
         return;
       }
+      this.notes.splice(position, 1);
+      this.createOrUpdateParticipant();
+    },
 
-      notes.splice(position, 1);
-
-      createOrUpdateParticipant(this.id, this.selectedParticipant)
+    createOrUpdateParticipant(participant = {
+      name: this.selectedParticipantName,
+      notes: this.notesByParticipant.map((n) => {
+        const { author, ...note } = n;
+        return note;
+      }),
+    }) {
+      return postParticipant(this.id, participant)
         .then(this.update)
         // eslint-disable-next-line
         .catch(console.log);
@@ -155,6 +158,7 @@ export default {
       this.name = retro.name;
       this.description = retro.description;
       this.participants = retro.participants;
+      this.notes = retro.notes;
     },
   },
 };
